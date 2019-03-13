@@ -1,0 +1,9 @@
+libbb/lib.a(xconnect.o): In function `str2sockaddr':
+xconnect.c:(.text.str2sockaddr+0xa4): warning: Using 'getaddrinfo' in statically linked applications requires at runtime the shared libraries from the glibc version used for linking
+modutils/lib.a(insmod.o): In function `insmod_main':
+insmod.c:(.text.insmod_main+0xf54): warning: warning: create_module is not implemented and will always fail
+insmod.c:(.text.insmod_main+0x460): warning: warning: query_module is not implemented and will always fail
+util-linux/lib.a(mount.o): In function `singlemount':
+mount.c:(.text.singlemount+0x264): warning: Using 'gethostbyname' in statically linked applications requires at runtime the shared libraries from the glibc version used for linking
+libbb/lib.a(xconnect.o): In function `bb_lookup_port':
+xconnect.c:(.text.bb_lookup_port+0x58): warning: Using 'getservbyname' in statically linked applications requires at runtime the shared libraries from the glibc version used for linking

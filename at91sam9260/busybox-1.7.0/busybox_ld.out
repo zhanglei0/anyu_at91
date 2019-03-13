@@ -1,0 +1,1260 @@
+GNU ld (Sourcery G++ Lite 2009q1-176) 2.19.51.20090205
+  Supported emulations:
+   armelf_linux_eabi
+   armelfb_linux_eabi
+using internal linker script:
+==================================================
+/* Script for -z combreloc: combine and sort reloc sections */
+OUTPUT_FORMAT("elf32-littlearm", "elf32-bigarm",
+	      "elf32-littlearm")
+OUTPUT_ARCH(arm)
+ENTRY(_start)
+SEARCH_DIR("=/usr/local/lib"); SEARCH_DIR("=/lib"); SEARCH_DIR("=/usr/lib");
+SECTIONS
+{
+  /* Read-only sections, merged into text segment: */
+  PROVIDE (__executable_start = SEGMENT_START("text-segment", 0x00008000)); . = SEGMENT_START("text-segment", 0x00008000) + SIZEOF_HEADERS;
+  .interp         : { *(.interp) }
+  .note.gnu.build-id : { *(.note.gnu.build-id) }
+  .hash           : { *(.hash) }
+  .gnu.hash       : { *(.gnu.hash) }
+  .dynsym         : { *(.dynsym) }
+  .dynstr         : { *(.dynstr) }
+  .gnu.version    : { *(.gnu.version) }
+  .gnu.version_d  : { *(.gnu.version_d) }
+  .gnu.version_r  : { *(.gnu.version_r) }
+  .rel.dyn        :
+    {
+      *(.rel.init)
+      *(.rel.text .rel.text.* .rel.gnu.linkonce.t.*)
+      *(.rel.fini)
+      *(.rel.rodata .rel.rodata.* .rel.gnu.linkonce.r.*)
+      *(.rel.data.rel.ro* .rel.gnu.linkonce.d.rel.ro.*)
+      *(.rel.data .rel.data.* .rel.gnu.linkonce.d.*)
+      *(.rel.tdata .rel.tdata.* .rel.gnu.linkonce.td.*)
+      *(.rel.tbss .rel.tbss.* .rel.gnu.linkonce.tb.*)
+      *(.rel.ctors)
+      *(.rel.dtors)
+      *(.rel.got)
+      *(.rel.bss .rel.bss.* .rel.gnu.linkonce.b.*)
+    }
+  .rel.ifunc.dyn        :
+    {
+      *(.rel.ifunc.*)
+    }
+  .rela.dyn       :
+    {
+      *(.rela.init)
+      *(.rela.text .rela.text.* .rela.gnu.linkonce.t.*)
+      *(.rela.fini)
+      *(.rela.rodata .rela.rodata.* .rela.gnu.linkonce.r.*)
+      *(.rela.data .rela.data.* .rela.gnu.linkonce.d.*)
+      *(.rela.tdata .rela.tdata.* .rela.gnu.linkonce.td.*)
+      *(.rela.tbss .rela.tbss.* .rela.gnu.linkonce.tb.*)
+      *(.rela.ctors)
+      *(.rela.dtors)
+      *(.rela.got)
+      *(.rela.bss .rela.bss.* .rela.gnu.linkonce.b.*)
+    }
+  .rela.ifunc.dyn       :
+    {
+      *(.rela.ifunc.*)
+    }
+  .rel.plt        : { *(.rel.plt) }
+  .rela.plt       : { *(.rela.plt) }
+  .init           :
+  {
+    KEEP (*(.init))
+  } =0
+  .plt            : { *(.plt) }
+  .text           :
+  {
+    *(.text .stub .text.* .gnu.linkonce.t.*)
+    /* .gnu.warning sections are handled specially by elf32.em.  */
+    *(.gnu.warning)
+    *(.glue_7t) *(.glue_7) *(.vfp11_veneer) *(.v4_bx)
+  } =0
+  .fini           :
+  {
+    KEEP (*(.fini))
+  } =0
+  PROVIDE (__etext = .);
+  PROVIDE (_etext = .);
+  PROVIDE (etext = .);
+  .rodata         : { *(.rodata .rodata.* .gnu.linkonce.r.*) }
+  .rodata1        : { *(.rodata1) }
+  .ARM.extab   : { *(.ARM.extab* .gnu.linkonce.armextab.*) }
+   __exidx_start = .;
+  .ARM.exidx   : { *(.ARM.exidx* .gnu.linkonce.armexidx.*) }
+   __exidx_end = .;
+  .eh_frame_hdr : { *(.eh_frame_hdr) }
+  .eh_frame       : ONLY_IF_RO { KEEP (*(.eh_frame)) }
+  .gcc_except_table   : ONLY_IF_RO { *(.gcc_except_table .gcc_except_table.*) }
+  /* Adjust the address for the data segment.  We want to adjust up to
+     the same address within the page on the next page up.  */
+  . = ALIGN (CONSTANT (MAXPAGESIZE)) - ((CONSTANT (MAXPAGESIZE) - .) & (CONSTANT (MAXPAGESIZE) - 1)); . = DATA_SEGMENT_ALIGN (CONSTANT (MAXPAGESIZE), CONSTANT (COMMONPAGESIZE));
+  /* Exception handling  */
+  .eh_frame       : ONLY_IF_RW { KEEP (*(.eh_frame)) }
+  .gcc_except_table   : ONLY_IF_RW { *(.gcc_except_table .gcc_except_table.*) }
+  /* Thread Local Storage sections  */
+  .tdata	  : { *(.tdata .tdata.* .gnu.linkonce.td.*) }
+  .tbss		  : { *(.tbss .tbss.* .gnu.linkonce.tb.*) *(.tcommon) }
+  .preinit_array     :
+  {
+    PROVIDE_HIDDEN (__preinit_array_start = .);
+    KEEP (*(.preinit_array))
+    PROVIDE_HIDDEN (__preinit_array_end = .);
+  }
+  .init_array     :
+  {
+     PROVIDE_HIDDEN (__init_array_start = .);
+     KEEP (*(SORT(.init_array.*)))
+     KEEP (*(.init_array))
+     PROVIDE_HIDDEN (__init_array_end = .);
+  }
+  .fini_array     :
+  {
+    PROVIDE_HIDDEN (__fini_array_start = .);
+    KEEP (*(.fini_array))
+    KEEP (*(SORT(.fini_array.*)))
+    PROVIDE_HIDDEN (__fini_array_end = .);
+  }
+  .ctors          :
+  {
+    /* gcc uses crtbegin.o to find the start of
+       the constructors, so we make sure it is
+       first.  Because this is a wildcard, it
+       doesn't matter if the user does not
+       actually link against crtbegin.o; the
+       linker won't look for a file to match a
+       wildcard.  The wildcard also means that it
+       doesn't matter which directory crtbegin.o
+       is in.  */
+    KEEP (*crtbegin.o(.ctors))
+    KEEP (*crtbegin?.o(.ctors))
+    /* We don't want to include the .ctor section from
+       the crtend.o file until after the sorted ctors.
+       The .ctor section from the crtend file contains the
+       end of ctors marker and it must be last */
+    KEEP (*(EXCLUDE_FILE (*crtend.o *crtend?.o ) .ctors))
+    KEEP (*(SORT(.ctors.*)))
+    KEEP (*(.ctors))
+  }
+  .dtors          :
+  {
+    KEEP (*crtbegin.o(.dtors))
+    KEEP (*crtbegin?.o(.dtors))
+    KEEP (*(EXCLUDE_FILE (*crtend.o *crtend?.o ) .dtors))
+    KEEP (*(SORT(.dtors.*)))
+    KEEP (*(.dtors))
+  }
+  .jcr            : { KEEP (*(.jcr)) }
+  .data.rel.ro : { *(.data.rel.ro.local* .gnu.linkonce.d.rel.ro.local.*) *(.data.rel.ro* .gnu.linkonce.d.rel.ro.*) }
+  .dynamic        : { *(.dynamic) }
+  . = DATA_SEGMENT_RELRO_END (0, .);
+  .got            : { *(.got.plt) *(.got) }
+  .data           :
+  {
+    __data_start = . ;
+    *(.data .data.* .gnu.linkonce.d.*)
+    SORT(CONSTRUCTORS)
+  }
+  .data1          : { *(.data1) }
+  _edata = .; PROVIDE (edata = .);
+  __bss_start = .;
+  __bss_start__ = .;
+  .bss            :
+  {
+   *(.dynbss)
+   *(.bss .bss.* .gnu.linkonce.b.*)
+   *(COMMON)
+   /* Align here to ensure that the .bss section occupies space up to
+      _end.  Align after .bss to ensure correct alignment even if the
+      .bss section disappears because there are no input sections.
+      FIXME: Why do we need it? When there is no .bss section, we don't
+      pad the .data section.  */
+   . = ALIGN(. != 0 ? 32 / 8 : 1);
+  }
+  _bss_end__ = . ; __bss_end__ = . ;
+  . = ALIGN(32 / 8);
+  . = ALIGN(32 / 8);
+  __end__ = . ;
+  _end = .; PROVIDE (end = .);
+  . = DATA_SEGMENT_END (.);
+  /* Stabs debugging sections.  */
+  .stab          0 : { *(.stab) }
+  .stabstr       0 : { *(.stabstr) }
+  .stab.excl     0 : { *(.stab.excl) }
+  .stab.exclstr  0 : { *(.stab.exclstr) }
+  .stab.index    0 : { *(.stab.index) }
+  .stab.indexstr 0 : { *(.stab.indexstr) }
+  .comment       0 : { *(.comment) }
+  /* DWARF debug sections.
+     Symbols in the DWARF debugging sections are relative to the beginning
+     of the section so we begin them at 0.  */
+  /* DWARF 1 */
+  .debug          0 : { *(.debug) }
+  .line           0 : { *(.line) }
+  /* GNU DWARF 1 extensions */
+  .debug_srcinfo  0 : { *(.debug_srcinfo) }
+  .debug_sfnames  0 : { *(.debug_sfnames) }
+  /* DWARF 1.1 and DWARF 2 */
+  .debug_aranges  0 : { *(.debug_aranges) }
+  .debug_pubnames 0 : { *(.debug_pubnames) }
+  /* DWARF 2 */
+  .debug_info     0 : { *(.debug_info .gnu.linkonce.wi.*) }
+  .debug_abbrev   0 : { *(.debug_abbrev) }
+  .debug_line     0 : { *(.debug_line) }
+  .debug_frame    0 : { *(.debug_frame) }
+  .debug_str      0 : { *(.debug_str) }
+  .debug_loc      0 : { *(.debug_loc) }
+  .debug_macinfo  0 : { *(.debug_macinfo) }
+  /* SGI/MIPS DWARF 2 extensions */
+  .debug_weaknames 0 : { *(.debug_weaknames) }
+  .debug_funcnames 0 : { *(.debug_funcnames) }
+  .debug_typenames 0 : { *(.debug_typenames) }
+  .debug_varnames  0 : { *(.debug_varnames) }
+  /* DWARF 3 */
+  .debug_pubtypes 0 : { *(.debug_pubtypes) }
+  .debug_ranges   0 : { *(.debug_ranges) }
+  .gnu.attributes 0 : { KEEP (*(.gnu.attributes)) }
+  .note.gnu.arm.ident 0 : { KEEP (*(.note.gnu.arm.ident)) }
+  /DISCARD/ : { *(.note.GNU-stack) *(.gnu_debuglink) }
+}
+
+
+==================================================
+attempt to open /home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/crt1.o succeeded
+/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/crt1.o
+attempt to open /home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/crti.o succeeded
+/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/crti.o
+attempt to open /home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../lib/gcc/arm-none-linux-gnueabi/4.3.3/crtbeginT.o succeeded
+/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../lib/gcc/arm-none-linux-gnueabi/4.3.3/crtbeginT.o
+attempt to open applets/built-in.o succeeded
+applets/built-in.o
+attempt to open archival/lib.a succeeded
+(archival/lib.a)bbunzip.o
+(archival/lib.a)cpio.o
+(archival/lib.a)gzip.o
+(archival/lib.a)rpm.o
+(archival/lib.a)rpm2cpio.o
+(archival/lib.a)tar.o
+(archival/lib.a)unzip.o
+attempt to open archival/libunarchive/lib.a succeeded
+(archival/libunarchive/lib.a)check_header_gzip.o
+(archival/libunarchive/lib.a)data_extract_all.o
+(archival/libunarchive/lib.a)data_extract_to_stdout.o
+(archival/libunarchive/lib.a)data_skip.o
+(archival/libunarchive/lib.a)decompress_bunzip2.o
+(archival/libunarchive/lib.a)decompress_uncompress.o
+(archival/libunarchive/lib.a)decompress_unlzma.o
+(archival/libunarchive/lib.a)decompress_unzip.o
+(archival/libunarchive/lib.a)filter_accept_list.o
+(archival/libunarchive/lib.a)filter_accept_reject_list.o
+(archival/libunarchive/lib.a)find_list_entry.o
+(archival/libunarchive/lib.a)get_header_cpio.o
+(archival/libunarchive/lib.a)get_header_tar.o
+(archival/libunarchive/lib.a)get_header_tar_bz2.o
+(archival/libunarchive/lib.a)get_header_tar_gz.o
+(archival/libunarchive/lib.a)get_header_tar_lzma.o
+(archival/libunarchive/lib.a)header_list.o
+(archival/libunarchive/lib.a)header_verbose_list.o
+(archival/libunarchive/lib.a)init_handle.o
+(archival/libunarchive/lib.a)open_transformer.o
+(archival/libunarchive/lib.a)seek_by_jump.o
+(archival/libunarchive/lib.a)seek_by_read.o
+(archival/libunarchive/lib.a)archive_xread_all_eof.o
+(archival/libunarchive/lib.a)data_align.o
+(archival/libunarchive/lib.a)filter_accept_all.o
+(archival/libunarchive/lib.a)header_skip.o
+attempt to open console-tools/lib.a succeeded
+(console-tools/lib.a)clear.o
+(console-tools/lib.a)deallocvt.o
+(console-tools/lib.a)dumpkmap.o
+(console-tools/lib.a)loadfont.o
+(console-tools/lib.a)loadkmap.o
+(console-tools/lib.a)reset.o
+(console-tools/lib.a)setlogcons.o
+attempt to open coreutils/lib.a succeeded
+(coreutils/lib.a)cat.o
+(coreutils/lib.a)chgrp.o
+(coreutils/lib.a)chmod.o
+(coreutils/lib.a)chown.o
+(coreutils/lib.a)chroot.o
+(coreutils/lib.a)cp.o
+(coreutils/lib.a)dd.o
+(coreutils/lib.a)df.o
+(coreutils/lib.a)dos2unix.o
+(coreutils/lib.a)du.o
+(coreutils/lib.a)echo.o
+(coreutils/lib.a)env.o
+(coreutils/lib.a)expand.o
+(coreutils/lib.a)expr.o
+(coreutils/lib.a)false.o
+(coreutils/lib.a)fold.o
+(coreutils/lib.a)head.o
+(coreutils/lib.a)hostid.o
+(coreutils/lib.a)id.o
+(coreutils/lib.a)install.o
+(coreutils/lib.a)length.o
+(coreutils/lib.a)ln.o
+(coreutils/lib.a)logname.o
+(coreutils/lib.a)ls.o
+(coreutils/lib.a)md5_sha1_sum.o
+(coreutils/lib.a)mkdir.o
+(coreutils/lib.a)mkfifo.o
+(coreutils/lib.a)mknod.o
+(coreutils/lib.a)mv.o
+(coreutils/lib.a)nice.o
+(coreutils/lib.a)nohup.o
+(coreutils/lib.a)od.o
+(coreutils/lib.a)printenv.o
+(coreutils/lib.a)printf.o
+(coreutils/lib.a)pwd.o
+(coreutils/lib.a)readlink.o
+(coreutils/lib.a)realpath.o
+(coreutils/lib.a)rm.o
+(coreutils/lib.a)rmdir.o
+(coreutils/lib.a)seq.o
+(coreutils/lib.a)sleep.o
+(coreutils/lib.a)sort.o
+(coreutils/lib.a)split.o
+(coreutils/lib.a)stat.o
+(coreutils/lib.a)stty.o
+(coreutils/lib.a)sum.o
+(coreutils/lib.a)sync.o
+(coreutils/lib.a)tail.o
+(coreutils/lib.a)tee.o
+(coreutils/lib.a)test.o
+(coreutils/lib.a)touch.o
+(coreutils/lib.a)tr.o
+(coreutils/lib.a)true.o
+(coreutils/lib.a)tty.o
+(coreutils/lib.a)uname.o
+(coreutils/lib.a)uniq.o
+(coreutils/lib.a)usleep.o
+(coreutils/lib.a)uudecode.o
+(coreutils/lib.a)uuencode.o
+(coreutils/lib.a)wc.o
+(coreutils/lib.a)who.o
+(coreutils/lib.a)whoami.o
+(coreutils/lib.a)yes.o
+attempt to open coreutils/libcoreutils/lib.a succeeded
+(coreutils/libcoreutils/lib.a)cp_mv_stat.o
+(coreutils/libcoreutils/lib.a)getopt_mk_fifo_nod.o
+attempt to open debianutils/lib.a succeeded
+(debianutils/lib.a)which.o
+attempt to open e2fsprogs/lib.a succeeded
+(e2fsprogs/lib.a)chattr.o
+(e2fsprogs/lib.a)e2fs_lib.o
+(e2fsprogs/lib.a)fsck.o
+(e2fsprogs/lib.a)lsattr.o
+attempt to open editors/lib.a succeeded
+(editors/lib.a)awk.o
+(editors/lib.a)cmp.o
+(editors/lib.a)diff.o
+(editors/lib.a)ed.o
+(editors/lib.a)sed.o
+(editors/lib.a)vi.o
+attempt to open findutils/lib.a succeeded
+(findutils/lib.a)find.o
+(findutils/lib.a)grep.o
+(findutils/lib.a)xargs.o
+attempt to open init/lib.a succeeded
+(init/lib.a)halt.o
+(init/lib.a)init.o
+(init/lib.a)mesg.o
+attempt to open ipsvd/lib.a succeeded
+attempt to open libbb/lib.a succeeded
+(libbb/lib.a)ask_confirmation.o
+(libbb/lib.a)bb_basename.o
+(libbb/lib.a)bb_pwd.o
+(libbb/lib.a)bb_strtonum.o
+(libbb/lib.a)chomp.o
+(libbb/lib.a)compare_string_array.o
+(libbb/lib.a)concat_path_file.o
+(libbb/lib.a)concat_subpath_file.o
+(libbb/lib.a)copy_file.o
+(libbb/lib.a)copyfd.o
+(libbb/lib.a)crc32.o
+(libbb/lib.a)default_error_retval.o
+(libbb/lib.a)device_open.o
+(libbb/lib.a)dump.o
+(libbb/lib.a)error_msg.o
+(libbb/lib.a)error_msg_and_die.o
+(libbb/lib.a)execable.o
+(libbb/lib.a)fclose_nonstdin.o
+(libbb/lib.a)fflush_stdout_and_exit.o
+(libbb/lib.a)find_mount_point.o
+(libbb/lib.a)find_pid_by_name.o
+(libbb/lib.a)find_root_device.o
+(libbb/lib.a)full_write.o
+(libbb/lib.a)get_console.o
+(libbb/lib.a)get_last_path_component.o
+(libbb/lib.a)get_line_from_file.o
+(libbb/lib.a)getopt32.o
+(libbb/lib.a)human_readable.o
+(libbb/lib.a)info_msg.o
+(libbb/lib.a)inode_hash.o
+(libbb/lib.a)isdirectory.o
+(libbb/lib.a)last_char_is.o
+(libbb/lib.a)llist.o
+(libbb/lib.a)make_directory.o
+(libbb/lib.a)makedev.o
+(libbb/lib.a)md5.o
+(libbb/lib.a)messages.o
+(libbb/lib.a)mode_string.o
+(libbb/lib.a)mtab_file.o
+(libbb/lib.a)parse_mode.o
+(libbb/lib.a)perror_msg.o
+(libbb/lib.a)perror_msg_and_die.o
+(libbb/lib.a)perror_nomsg.o
+(libbb/lib.a)perror_nomsg_and_die.o
+(libbb/lib.a)process_escape_sequence.o
+(libbb/lib.a)procps.o
+(libbb/lib.a)read.o
+(libbb/lib.a)recursive_action.o
+(libbb/lib.a)remove_file.o
+(libbb/lib.a)safe_strncpy.o
+(libbb/lib.a)safe_write.o
+(libbb/lib.a)sha1.o
+(libbb/lib.a)skip_whitespace.o
+(libbb/lib.a)speed_table.o
+(libbb/lib.a)uuencode.o
+(libbb/lib.a)verror_msg.o
+(libbb/lib.a)vfork_daemon_rexec.o
+(libbb/lib.a)warn_ignoring_args.o
+(libbb/lib.a)wfopen.o
+(libbb/lib.a)wfopen_input.o
+(libbb/lib.a)xatonum.o
+(libbb/lib.a)xfuncs.o
+(libbb/lib.a)xgetcwd.o
+(libbb/lib.a)xreadlink.o
+(libbb/lib.a)xregcomp.o
+attempt to open libpwdgrp/lib.a succeeded
+(libpwdgrp/lib.a)pwd_grp.o
+(libpwdgrp/lib.a)uidgid_get.o
+attempt to open loginutils/lib.a succeeded
+(loginutils/lib.a)addgroup.o
+(loginutils/lib.a)adduser.o
+(loginutils/lib.a)deluser.o
+(loginutils/lib.a)getty.o
+attempt to open miscutils/lib.a succeeded
+(miscutils/lib.a)adjtimex.o
+(miscutils/lib.a)chrt.o
+(miscutils/lib.a)crond.o
+(miscutils/lib.a)crontab.o
+(miscutils/lib.a)dc.o
+(miscutils/lib.a)eject.o
+(miscutils/lib.a)hdparm.o
+(miscutils/lib.a)last.o
+(miscutils/lib.a)less.o
+(miscutils/lib.a)makedevs.o
+(miscutils/lib.a)mountpoint.o
+(miscutils/lib.a)mt.o
+(miscutils/lib.a)raidautorun.o
+(miscutils/lib.a)readahead.o
+(miscutils/lib.a)runlevel.o
+(miscutils/lib.a)rx.o
+(miscutils/lib.a)setsid.o
+(miscutils/lib.a)strings.o
+(miscutils/lib.a)taskset.o
+(miscutils/lib.a)ttysize.o
+(miscutils/lib.a)watchdog.o
+attempt to open modutils/lib.a succeeded
+(modutils/lib.a)insmod.o
+(modutils/lib.a)lsmod.o
+(modutils/lib.a)modprobe.o
+(modutils/lib.a)rmmod.o
+attempt to open networking/lib.a succeeded
+attempt to open networking/libiproute/lib.a succeeded
+attempt to open networking/udhcp/lib.a succeeded
+attempt to open procps/lib.a succeeded
+(procps/lib.a)free.o
+(procps/lib.a)fuser.o
+(procps/lib.a)kill.o
+(procps/lib.a)nmeter.o
+(procps/lib.a)pidof.o
+(procps/lib.a)ps.o
+(procps/lib.a)renice.o
+(procps/lib.a)sysctl.o
+(procps/lib.a)top.o
+(procps/lib.a)uptime.o
+(procps/lib.a)watch.o
+attempt to open runit/lib.a succeeded
+attempt to open selinux/lib.a succeeded
+attempt to open shell/lib.a succeeded
+(shell/lib.a)msh.o
+attempt to open sysklogd/lib.a succeeded
+(sysklogd/lib.a)klogd.o
+(sysklogd/lib.a)logger.o
+(sysklogd/lib.a)logread.o
+(sysklogd/lib.a)syslogd.o
+attempt to open util-linux/lib.a succeeded
+(util-linux/lib.a)dmesg.o
+(util-linux/lib.a)fbset.o
+(util-linux/lib.a)fdformat.o
+(util-linux/lib.a)fdisk.o
+(util-linux/lib.a)freeramdisk.o
+(util-linux/lib.a)fsck_minix.o
+(util-linux/lib.a)getopt.o
+(util-linux/lib.a)hexdump.o
+(util-linux/lib.a)hwclock.o
+(util-linux/lib.a)ipcrm.o
+(util-linux/lib.a)ipcs.o
+(util-linux/lib.a)losetup.o
+(util-linux/lib.a)mdev.o
+(util-linux/lib.a)mkfs_minix.o
+(util-linux/lib.a)mkswap.o
+(util-linux/lib.a)more.o
+(util-linux/lib.a)mount.o
+(util-linux/lib.a)pivot_root.o
+(util-linux/lib.a)rdate.o
+(util-linux/lib.a)readprofile.o
+(util-linux/lib.a)setarch.o
+(util-linux/lib.a)swaponoff.o
+(util-linux/lib.a)switch_root.o
+(util-linux/lib.a)umount.o
+attempt to open archival/built-in.o succeeded
+attempt to open archival/libunarchive/built-in.o succeeded
+attempt to open console-tools/built-in.o succeeded
+attempt to open coreutils/built-in.o succeeded
+attempt to open coreutils/libcoreutils/built-in.o succeeded
+attempt to open debianutils/built-in.o succeeded
+attempt to open e2fsprogs/built-in.o succeeded
+attempt to open editors/built-in.o succeeded
+attempt to open findutils/built-in.o succeeded
+attempt to open init/built-in.o succeeded
+attempt to open ipsvd/built-in.o succeeded
+attempt to open libbb/built-in.o succeeded
+attempt to open libpwdgrp/built-in.o succeeded
+attempt to open loginutils/built-in.o succeeded
+attempt to open miscutils/built-in.o succeeded
+attempt to open modutils/built-in.o succeeded
+attempt to open networking/built-in.o succeeded
+attempt to open networking/libiproute/built-in.o succeeded
+attempt to open networking/udhcp/built-in.o succeeded
+attempt to open procps/built-in.o succeeded
+attempt to open runit/built-in.o succeeded
+attempt to open selinux/built-in.o succeeded
+attempt to open shell/built-in.o succeeded
+attempt to open sysklogd/built-in.o succeeded
+attempt to open util-linux/built-in.o succeeded
+(libbb/lib.a)change_identity.o
+(libbb/lib.a)herror_msg.o
+(libbb/lib.a)kernel_version.o
+(libbb/lib.a)lineedit.o
+(libbb/lib.a)login.o
+(libbb/lib.a)loop.o
+(libbb/lib.a)match_fstype.o
+(libbb/lib.a)pidfile.o
+(libbb/lib.a)simplify_path.o
+(libbb/lib.a)trim.o
+(libbb/lib.a)u_signal_names.o
+(libbb/lib.a)xconnect.o
+attempt to open /home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../lib/gcc/arm-none-linux-gnueabi/4.3.3/libm.a failed
+attempt to open /home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../lib/gcc/libm.a failed
+attempt to open /home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../lib/gcc/arm-none-linux-gnueabi/4.3.3/../../../../arm-none-linux-gnueabi/lib/libm.a failed
+attempt to open /home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/lib/libm.a failed
+attempt to open /home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libm.a succeeded
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libm.a)s_sin.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libm.a)w_atan2.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libm.a)w_exp.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libm.a)w_log.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libm.a)w_pow.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libm.a)w_sqrt.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libm.a)m_isnan.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libm.a)m_finite.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libm.a)m_signbit.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libm.a)branred.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libm.a)dosincos.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libm.a)sincos32.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libm.a)k_standard.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libm.a)s_lib_version.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libm.a)s_matherr.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libm.a)e_atan2.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libm.a)e_exp.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libm.a)e_log.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libm.a)e_pow.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libm.a)e_sqrt.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libm.a)s_rint.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libm.a)mpa.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libm.a)mpatan2.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libm.a)mpatan.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libm.a)mplog.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libm.a)mpsqrt.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libm.a)slowexp.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libm.a)slowpow.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libm.a)halfulp.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libm.a)mpexp.o
+attempt to open /home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../lib/gcc/arm-none-linux-gnueabi/4.3.3/libgcc.a succeeded
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../lib/gcc/arm-none-linux-gnueabi/4.3.3/libgcc.a)_udivsi3.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../lib/gcc/arm-none-linux-gnueabi/4.3.3/libgcc.a)_divsi3.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../lib/gcc/arm-none-linux-gnueabi/4.3.3/libgcc.a)_lshrdi3.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../lib/gcc/arm-none-linux-gnueabi/4.3.3/libgcc.a)_arm_addsubdf3.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../lib/gcc/arm-none-linux-gnueabi/4.3.3/libgcc.a)_arm_muldivdf3.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../lib/gcc/arm-none-linux-gnueabi/4.3.3/libgcc.a)_arm_cmpdf2.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../lib/gcc/arm-none-linux-gnueabi/4.3.3/libgcc.a)_arm_fixdfsi.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../lib/gcc/arm-none-linux-gnueabi/4.3.3/libgcc.a)_arm_fixunsdfsi.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../lib/gcc/arm-none-linux-gnueabi/4.3.3/libgcc.a)_arm_addsubsf3.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../lib/gcc/arm-none-linux-gnueabi/4.3.3/libgcc.a)_arm_muldivsf3.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../lib/gcc/arm-none-linux-gnueabi/4.3.3/libgcc.a)_aeabi_ldivmod.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../lib/gcc/arm-none-linux-gnueabi/4.3.3/libgcc.a)_aeabi_uldivmod.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../lib/gcc/arm-none-linux-gnueabi/4.3.3/libgcc.a)_dvmd_lnx.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../lib/gcc/arm-none-linux-gnueabi/4.3.3/libgcc.a)bpabi.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../lib/gcc/arm-none-linux-gnueabi/4.3.3/libgcc.a)_divdi3.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../lib/gcc/arm-none-linux-gnueabi/4.3.3/libgcc.a)_udivdi3.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../lib/gcc/arm-none-linux-gnueabi/4.3.3/libgcc.a)_clz.o
+attempt to open /home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../lib/gcc/arm-none-linux-gnueabi/4.3.3/libgcc_eh.a succeeded
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../lib/gcc/arm-none-linux-gnueabi/4.3.3/libgcc_eh.a)unwind-arm.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../lib/gcc/arm-none-linux-gnueabi/4.3.3/libgcc_eh.a)libunwind.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../lib/gcc/arm-none-linux-gnueabi/4.3.3/libgcc_eh.a)pr-support.o
+attempt to open /home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../lib/gcc/arm-none-linux-gnueabi/4.3.3/libc.a failed
+attempt to open /home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../lib/gcc/libc.a failed
+attempt to open /home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../lib/gcc/arm-none-linux-gnueabi/4.3.3/../../../../arm-none-linux-gnueabi/lib/libc.a failed
+attempt to open /home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/lib/libc.a failed
+attempt to open /home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a succeeded
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)libc-start.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)check_fds.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)libc-tls.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)elf-init.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)errno.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)aeabi_read_tp.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)errno-loc.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)setlocale.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)findlocale.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)loadlocale.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)loadarchive.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)C_name.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)xlocale.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)global-locale.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)C-messages.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)C-monetary.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)C-numeric.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)C-paper.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)C-name.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)C-address.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)C-telephone.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)C-measurement.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)C-identification.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)C-collate.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)assert.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)ctype.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)ctype-extn.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)ctype-info.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)dcgettext.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)dcigettext.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)finddomain.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)loadmsgcat.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)localealias.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)l10nflist.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)explodename.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)plural.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)plural-exp.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)hash-string.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)bsd-_setjmp.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)longjmp.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)__longjmp.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)jmp-unwind.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)signal.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)raise.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)sigaction.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)sigprocmask.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)kill.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)sigsuspend.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)sigempty.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)sigaddset.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)sigrestorer.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)atof.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)atoi.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)abort.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)bsearch.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)msort.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)getenv.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)putenv.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)setenv.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)exit.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)atexit.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)cxa_atexit.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)random.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)random_r.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)rand.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)strtol.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)strtoul.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)strtoll.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)strtoull.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)strtol_l.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)strtoul_l.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)strtoll_l.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)strtoull_l.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)strtod.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)strtod_l.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)system.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)canonicalize.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)xpg_basename.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)grouping.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)tens_in_limb.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)fpioconst.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)snprintf.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)asprintf.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)fscanf.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)sscanf.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)perror.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)remove.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)rename.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)fxprintf.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)iofclose.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)iofdopen.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)iofflush.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)iofgets.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)iofopen.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)iofputs.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)iofread.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)ioftell.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)iofwrite.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)iogetline.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)iopopen.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)ioputs.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)ioseekoff.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)ioungetc.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)iovsscanf.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)iofopen64.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)putchar.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)clearerr.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)feof.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)ferror.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)fileno.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)fputc.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)fseek.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)getc.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)getchar.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)pclose.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)putc.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)rewind.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)setbuf.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)vasprintf.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)vsnprintf.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)fcloseall.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)freopen64.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)ftello64.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)libc_fatal.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)iofgets_u.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)wgenops.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)wfileops.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)fileops.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)genops.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)stdfiles.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)stdio.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)strops.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)malloc.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)morecore.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)strcat.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)strchr.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)strcmp.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)strcoll.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)strcpy.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)strcspn.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)strdup.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)strndup.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)strerror.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)_strerror.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)strlen.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)strnlen.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)strncat.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)strncmp.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)strncpy.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)strrchr.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)strpbrk.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)strspn.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)strstr.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)strtok.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)memchr.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)memcmp.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)memmove.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)memset.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)mempcpy.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)stpcpy.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)strcasecmp.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)strncase.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)strncase_l.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)memcpy.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)wordcopy.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)strsep.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)rawmemchr.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)strchrnul.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)argz-count.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)argz-ctsep.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)argz-stringify.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)argz-addsep.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)strcoll_l.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)wmemcpy.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)wmemmove.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)wmempcpy.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)wcsmbsload.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)ctime.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)gmtime.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)localtime.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)mktime.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)time.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)gettimeofday.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)settimeofday.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)tzset.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)tzfile.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)getitimer.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)setitimer.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)stime.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)strptime.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)strptime_l.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)strftime.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)strftime_l.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)alt_digit.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)era.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)lc-time-cleanup.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)opendir.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)closedir.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)readdir64.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)setgroups.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)uname.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)times.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)wait.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)waitpid.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)wait4.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)alarm.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)sleep.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)pause.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)nanosleep.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)fork.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)vfork.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)_exit.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)execve.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)execv.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)execl.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)execvp.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)execlp.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)getpid.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)getppid.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)getuid.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)geteuid.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)getgid.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)getegid.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)getgroups.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)setuid.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)setgid.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)getpgrp.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)getsid.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)setsid.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)setresuid.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)setresgid.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)sysconf.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)fnmatch.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)confstr.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)getopt.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)getopt1.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)sched_getp.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)sched_sets.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)sched_gets.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)sched_yield.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)sched_primax.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)sched_primin.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)sched_getaffinity.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)sched_setaffinity.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)get_child_max.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)getaddrinfo.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)regex.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)getlogin_r.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)environ.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)exit-thread.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)utime.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)mkfifo.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)stat64.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)fstat64.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)lstat64.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)xstat64.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)fxstat64.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)lxstat64.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)mknod.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)xmknod.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)statfs64.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)umask.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)chmod.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)fchmod.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)mkdir.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)open.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)open64.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)close.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)read.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)write.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)access.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)fcntl.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)dup.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)dup2.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)pipe.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)creat64.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)chdir.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)fchdir.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)getcwd.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)chown.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)lchown.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)ttyname.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)ttyname_r.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)isatty.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)link.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)symlink.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)readlink.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)unlink.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)rmdir.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)have_o_cloexec.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)open64_2.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)speed.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)tcsetattr.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)tcgetattr.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)tcgetpgrp.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)tcflush.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)cfmakeraw.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)getrlimit.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)setrlimit64.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)getpriority.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)setpriority.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)sbrk.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)ioctl.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)getpagesize.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)getdtsz.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)gethostname.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)getdomain.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)select.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)chroot.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)fsync.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)sync.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)reboot.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)gethostid.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)swapon.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)swapoff.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)mkstemp64.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)usleep.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)mntent.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)mntent_r.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)utimes.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)ftruncate64.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)syslog.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)syscall.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)mmap.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)mmap64.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)munmap.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)mprotect.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)madvise.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)mlock.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)munlock.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)tsearch.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)getsysstats.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)dirname.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)getclktck.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)init-misc.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)llseek.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)umount.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)umount2.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)readahead.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)makedev.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)adjtimex.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)delete_module.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)init_module.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)klogctl.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)mount.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)mremap.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)personality.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)pivot_root.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)sysinfo.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)stub-syscalls.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)bind.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)connect.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)getsockname.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)listen.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)recv.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)send.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)sendto.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)setsockopt.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)socket.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)msgget.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)msgctl.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)semop.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)semget.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)semctl.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)shmat.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)shmdt.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)shmget.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)shmctl.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)wcfuncs.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)wctype.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)iswctype.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)alloca_cutoff.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)libc-lowlevellock.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)libc-cancellation.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)register-atfork.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)libc_multiple_threads.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)herror.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)inet_addr.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)inet_pton.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)res_libc.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)nsswitch.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)hosts-lookup.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)memcpy_chk.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)memmove_chk.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)memset_chk.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)strcat_chk.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)strcpy_chk.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)strncat_chk.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)strncpy_chk.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)sprintf_chk.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)vsprintf_chk.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)snprintf_chk.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)vsnprintf_chk.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)printf_chk.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)fprintf_chk.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)vprintf_chk.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)vfprintf_chk.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)chk_fail.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)realpath_chk.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)vasprintf_chk.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)dprintf_chk.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)vdprintf_chk.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)fortify_fail.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)backtrace.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)backtracesymsfd.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)idn-stub.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)inet_ntoa.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)herrno.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)herrno-loc.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)gethstbyad_r.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)gethstbynm.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)gethstbynm2_r.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)gethstbynm_r.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)getsrvbynm.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)getsrvbynm_r.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)in6_addr.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)getnameinfo.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)if_index.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)ifaddrs.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)check_pf.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)check_native.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)auth_unix.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)authuxprot.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)bindrsvprt.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)clnt_perr.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)clnt_tcp.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)clnt_udp.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)pm_getmaps.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)pm_getport.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)pmap_prot.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)pmap_prot2.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)rpc_prot.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)rpc_common.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)rpc_thread.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)svc.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)svc_auth.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)svc_authux.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)xdr.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)xdr_array.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)xdr_mem.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)xdr_rec.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)xdr_ref.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)key_call.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)key_prot.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)svcauth_des.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)create_xid.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)des_crypt.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)des_impl.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)nscd_getpw_r.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)nscd_getgr_r.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)nscd_gethst_r.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)nscd_getai.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)nscd_getserv_r.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)nscd_helper.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)getutent.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)getutent_r.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)utmp_file.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)utmpname.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)updwtmp.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)dl-support.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)dl-addr.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)enbl-secure.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)dl-profstub.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)dl-libc.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)dl-sysdep.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)init-first.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)sysdep.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)gconv_open.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)gconv.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)gconv_close.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)gconv_db.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)gconv_conf.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)gconv_builtin.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)gconv_simple.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)gconv_trans.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)gconv_cache.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)gconv_dl.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)catnames.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)C-ctype.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)C-time.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)SYS_libc.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)coll-lookup.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)lc-ctype.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)lc-collate.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)localename.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)setfpucw.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)fpu_control.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)setjmp.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)sigjmp.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)add_n.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)cmp.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)lshift.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)rshift.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)mul.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)mul_1.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)mul_n.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)sub_n.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)submul_1.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)mpn2dbl.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)qsort.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)secure-getenv.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)lrand48_r.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)nrand48_r.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)srand48_r.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)drand48-iter.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)_itoa.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)itoa-digits.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)itoa-udigits.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)vfprintf.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)printf_fp.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)reg-printf.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)printf_fphex.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)fprintf.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)dprintf.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)vfscanf.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)tempname.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)getline.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)funlockfile.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)vfwprintf.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)errlist.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)printf-parsemb.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)printf-parsewc.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)filedoalloc.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)iogetdelim.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)iopadn.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)iosetbuffer.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)iofwide.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)memstream.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)iovdprintf.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)ftello.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)iofread_u.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)iofputs_u.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)wfiledoalloc.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)iowpadn.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)sdlerror.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)sdladdr.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)sdladdr1.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)sdlinfo.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)sdlmopen.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)stpncpy.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)strcasecmp_l.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)memrchr.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)wmemset.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)wcscat.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)wcschr.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)wcslen.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)wmemchr.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)btowc.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)mbrlen.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)mbrtowc.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)wcrtomb.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)mbsrtowcs.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)wcsrtombs.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)mbsnrtowcs.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)wcsnlen.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)wcschrnul.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)wcscoll.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)wcscoll_l.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)mbsrtowcs_l.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)offtime.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)asctime.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)getdents64.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)lseek.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)poll.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)setrlimit.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)brk.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)readv.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)writev.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)getpeername.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)recvfrom.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)recvmsg.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)opensock.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)wctrans.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)towctrans.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)inet_ntop.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)res_init.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)res_hconf.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)service-lookup.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)digits_dots.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)readonly-area.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)getsrvbypt_r.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)ifreq.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)auth_none.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)clnt_gen.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)clnt_simp.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)rpc_dtable.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)pmap_clnt.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)publickey.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)netname.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)clnt_unix.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)nis_hash.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)dl-load.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)dl-cache.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)dl-lookup.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)dl-object.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)dl-reloc.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)dl-error.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)dl-debug.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)dl-misc.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)dl-profile.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)dl-tls.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)dl-origin.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)dl-execstack.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)dl-open.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)dl-close.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)dl-trampoline.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)dl-tsd.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)lc-monetary.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)lc-numeric.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)s_isinf.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)addmul_1.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)divrem.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)dbl2mpn.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)strtof.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)strtold.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)strtof_l.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)strtold_l.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)_itowa.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)itowa-digits.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)sprintf.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)iovsprintf.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)sdlopen.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)sdlclose.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)sdlsym.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)sdlvsym.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)wcscmp.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)sendmsg.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)profil.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)prof-freq.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)key-lookup.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)getprtname_r.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)dl-deps.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)dl-runtime.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)dl-init.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)dl-fini.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)dl-version.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)dl-sym.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)mpn2flt.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/libc.a)proto-lookup.o
+(/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../lib/gcc/arm-none-linux-gnueabi/4.3.3/libgcc_eh.a)unwind-c.o
+attempt to open /home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../lib/gcc/arm-none-linux-gnueabi/4.3.3/crtend.o succeeded
+/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../lib/gcc/arm-none-linux-gnueabi/4.3.3/crtend.o
+attempt to open /home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/crtn.o succeeded
+/home/lei-zhang/Desktop/at91sam9260/arm-2009q1/bin/../arm-none-linux-gnueabi/libc/usr/lib/crtn.o

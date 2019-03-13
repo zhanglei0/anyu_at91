@@ -1,0 +1,14 @@
+# /etc/profile: system-wide .profile file for the Bourne shells
+
+
+echo
+echo "Anyutech FileSystem is Ready ..."
+echo
+ 
+USER="`id -un`"
+LOGNAME=$USER
+PS1='#'
+PATH=$PATH
+HOSTNAME="Anyutech"
+PATH=$PATH:/mnt/
+export USER LOGNAME PS1 PATH

@@ -1,0 +1,12 @@
+do_basic_setup  will call all the init section functions ,such as rootfs_initcall(populate_rootfs);
+kernel_init--->do_basic_setup
+           --->init_post  begin to exec /sbin/init
+rest_init--->kernel_init
+
+vfs_caches_init--->mnt_init--->init_rootfs   this chain is earlier
+                           --->init_mount_tree
+
+
+
+Ref:  https://www.linuxidc.com/Linux/2011-10/45448p2.htm
+
